@@ -29,19 +29,26 @@ body {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    width: 440px;
-    height: 100px;
+    width: 450px;
+    height: 200px;
     background-color: aliceblue;
     border-radius: 10px;
     padding: 6px;
     text-align: right;
     background-color: rgb(105, 244, 189);
     text-align: left;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.display-left {
+    display: flex;
+    flex-direction: column;
 }
 
 .display-right {
     text-align: right;
-    font-size: 48px;
+    font-size: 80px;
 }
 
 .options {
@@ -52,11 +59,15 @@ body {
     height: 550px;
     flex-wrap: wrap;
     flex-direction: row;
-    font-size: 48px;
-    color: white;
 }
 
-.button {
+button {
+    outline: none;
+    border: none;
+    padding: none;
+    font-size: none;
+    margin: none;
+    font-size: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,15 +79,20 @@ body {
     cursor: pointer;
 }
 
-.button:hover {
+button:hover {
     background-color: rgb(105, 244, 189);
 }
 
-.button:active {
+button:active {
     background-color: rgb(52, 77, 108);
     transition: .1s;
 }
 
 .zero {
     flex-grow: .8;
+}
+
+.history {
+    opacity: .7;
+    text-decoration: none;
 }
