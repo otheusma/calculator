@@ -14,12 +14,10 @@ let b = "";
 let isAfterOperation = false;
 let isValid = /^[-]?[\d.]+[e]?$/;
 
-display.textContent = "0";
-operation.textContent = "0";
-
 equals.addEventListener("click", () => {
     if (!op || !a || !b) return;
     operate(op, a, b);
+    op = ""
 });
 
 percent.addEventListener("click", () => {
@@ -49,7 +47,6 @@ sign.addEventListener("click", () => {
 
 decimal.addEventListener("click", () => {
     if (Array.from(display.textContent).includes(".") || operation.textContent.slice(-1) === " " || !a) return;
-
     if (!op) {
         isAfterOperation = false;
         a += ".";
@@ -71,7 +68,7 @@ backspace.addEventListener("click", () => {
         operation.textContent = operation.textContent.slice(0, operation.textContent.length - 1);
     }
     if (!isValid.exec(display.textContent)) {
-        display.textContent = "0";
+        display.textContent = "";
     }
     if (!op) {
         a = display.textContent;
@@ -84,7 +81,7 @@ backspace.addEventListener("click", () => {
 
 operands.forEach(num => {
     num.addEventListener("click", () => {
-        if (num.id === "0" && !display.textContent) return;
+        if (num.id === "0" && !isValid.exec(display.textContent)) return;
         if (!op) {
             if (isAfterOperation) {
                 a = "";
@@ -109,14 +106,14 @@ operands.forEach(num => {
 operators.forEach(operator => {
     operator.addEventListener("click", () => {
         if (!a) return;
-        if (!b) {
-            op = operator.id;
-            display.textContent = op;
-            operation.textContent = `${a} ${op} `;
-        }
-        if (b) {
+        if (a && b) {
             operate(op, a, b);
+        } else if (op) {
+            operate(op, a, a);
         }
+        op = operator.id;
+        display.textContent = op;
+        operation.textContent = `${a} ${op} `;
     })
 });
 
@@ -152,6 +149,9 @@ function subtraction(a, b) {
     return +a - +b;
 }
 function division(a, b) {
+    if (b === "0") {
+        return "o.O"
+    }
     return +a / +b;
 }
 function multiplication(a, b) {
