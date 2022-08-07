@@ -1,80 +1,45 @@
 const display = document.querySelector("#currentNum");
 const operation = document.querySelector("#operation");
-const operands = document.querySelectorAll(".operand");
-const operators = document.querySelectorAll(".operator");
-const equals = document.querySelector("#equals");
-const backspace = document.querySelector("#ec");
-const erase = document.querySelector("#ac");
-const decimal = document.querySelector("#decimal");
-const sign = document.querySelector("#sign");
-const percent = document.querySelector("#percent");
+const operandBtns = document.querySelectorAll(".operand");
+const operatorBtns = document.querySelectorAll(".operator");
+const equalsBtn = document.querySelector("#equals");
+const backspaceBtn = document.querySelector("#ec");
+const clearBtn = document.querySelector("#ac");
+const decimalBtn = document.querySelector("#decimal");
+const signBtn = document.querySelector("#sign");
+const percentBtn = document.querySelector("#percent");
 const displayleftDiv = document.querySelector(".display-left");
+const isValid = /^[-]?[\d.e+]+$/;
+const isNumber = /\d/;
 let op = "";
 let a = "";
 let b = "";
 let isAfterOperation = false;
-let isValid = /^[-]?[\d.e+]+$/;
 
-equals.addEventListener("click", () => {
-    if (a !== "" && b !== "") {
-        operate(op, a, b);
-    } else if (a !== "" && op) {
-        display.textContent = a;
-        operation.textContent = a;
-        op = "";
-    }
+decimalBtn.addEventListener("click", () => setDecimal());
+clearBtn.addEventListener("click", () => clear());
+backspaceBtn.addEventListener("click", () => backspace());
+equalsBtn.addEventListener("click", () => equals());
+percentBtn.addEventListener("click", () => percent());
+signBtn.addEventListener("click", () => sign());
+operandBtns.forEach(operand => operand.addEventListener("click", () => updateOperand(operand.id)));
+operatorBtns.forEach(operator => operator.addEventListener("click", () => updateOperator(operator.id)));
+
+document.addEventListener("keydown", (e) => {
+if (isNumber.exec(e.key)) updateOperand(e.key);
+    else if (e.key === ".") setDecimal();
+    else if (e.key === "Backspace") backspace();
 });
 
-percent.addEventListener("click", () => {
-    if (!op) {
-        a = setScientificNotation(+a / 100).toString();
-        display.textContent = a;
-        operation.textContent = a;
-
-    } else {
-        b = setScientificNotation(+b / 100).toString();
-        display.textContent = b;
-        operation.textContent = `${a} ${op} ${b}`;
-    }
-})
-
-sign.addEventListener("click", () => {
-    if (!/\d/.exec(display.textContent)) return;
-    if (display.textContent.charAt(0) === "-") {
-        display.textContent = display.textContent.slice(1);
-    } else {
-        display.textContent = "-" + display.textContent;
-    }
-    if (!op) {
-        a = display.textContent;
-    } else {
-        b = display.textContent;
-    }
-});
-
-decimal.addEventListener("click", () => {
-    if (Array.from(display.textContent).includes(".") || operation.textContent.slice(-1) === " " || !a) return;
-    if (!op) {
-        isAfterOperation = false;
-        a += ".";
-        display.textContent = a;
-        operation.textContent = a;
-    } else {
-        b += ".";
-        display.textContent = b;
-        operation.textContent = `${a} ${op} ${b}`
-    }
-});
-
-erase.addEventListener("click", () => {
+function clear() {
     a = "";
     b = "";
     op = "";
     display.textContent = a;
     operation.textContent = a;
-})
+}
 
-backspace.addEventListener("click", () => {
+function backspace() {
     if (operation.textContent.endsWith(" ")) {
         return;
     }
@@ -92,45 +57,102 @@ backspace.addEventListener("click", () => {
         b = display.textContent;
         operation.textContent = `${a} ${op} ${b}`
     }
-});
+}
 
-operands.forEach(num => {
-    num.addEventListener("click", () => {
-        if (num.id === "0" && display.textContent === "0") return;
-        if (!op) {
-            if (isAfterOperation) {
-                a = "";
-                isAfterOperation = false;
-            }
-            if (a.length < 9) {
-                a += num.id;
-                display.textContent = a;
-                operation.textContent = a;
-            }
+function setDecimal() {
+    if (Array.from(display.textContent).includes(".") || operation.textContent.slice(-1) === " " || !a) return;
+    if (!op) {
+        isAfterOperation = false;
+        a += ".";
+        display.textContent = a;
+        operation.textContent = a;
+    } else {
+        b += ".";
+        display.textContent = b;
+        operation.textContent = `${a} ${op} ${b}`
+    }
+}
 
-        } else {
-            if (b.length < 9) {
-                b += num.id;
-                display.textContent = b;
-                operation.textContent = `${a} ${op} ${b}`;
-            }
-        }
-    })
-});
+function equals() {
+    if (a !== "" && b !== "") {
+        operate(op, a, b);
+    } else if (a !== "" && op) {
+        display.textContent = a;
+        operation.textContent = a;
+        op = "";
+        isAfterOperation = true;
+    }
+}
 
-operators.forEach(operator => {
-    operator.addEventListener("click", () => {
+function percent() {
+    if (!op) {
         if (a === "") return;
-        if (a && b) {
-            operate(op, a, b);
-        } else if (op) {
-            operate(op, a, a);
+        a = setScientificNotation(+a / 100).toString();
+        display.textContent = a;
+        operation.textContent = a;
+
+    } else {
+        if (b === "") return;
+        b = setScientificNotation(+b / 100).toString();
+        display.textContent = b;
+        operation.textContent = `${a} ${op} ${b}`;
+    }
+}
+
+function sign() {
+    if (!isNumber.exec(display.textContent)) return;
+    if (display.textContent.charAt(0) === "-") {
+        display.textContent = display.textContent.slice(1);
+    } else {
+        display.textContent = "-" + display.textContent;
+    }
+    if (!op) {
+        a = display.textContent;
+    } else {
+        b = display.textContent;
+    }
+}
+
+function updateOperand(operand) {
+    if (operand === "0" && display.textContent === "0") return;
+    if (!op) {
+        if (isAfterOperation) {
+            a = "";
+            isAfterOperation = false;
         }
-        op = operator.id;
-        display.textContent = op;
-        operation.textContent = `${a} ${op} `;
-    })
-});
+        if (a.length < 9) {
+            a += operand;
+            display.textContent = a;
+            operation.textContent = a;
+        }
+
+    } else {
+        if (b.length < 9) {
+            b += operand;
+            display.textContent = b;
+            operation.textContent = `${a} ${op} ${b}`;
+        }
+    }
+}
+
+function updateOperator(operator) {
+    if (a === "") return;
+    if (a && b) {
+        operate(op, a, b);
+    } else if (op) {
+        operate(op, a, a);
+    }
+    op = operator;
+    display.textContent = op;
+    operation.textContent = `${a} ${op} `;
+}
+
+function setScientificNotation(value) {
+    if (value.toString().length > 9) {
+        return Number.parseFloat(value).toExponential(3);
+    }
+    return value;
+}
 
 function operate(opr, numA, numB) {
     if (!isValid.exec(numA) && !isValid.exec(numB)) return;
@@ -158,21 +180,26 @@ function operate(opr, numA, numB) {
     display.textContent = result;
     operation.textContent = a;
 }
+
 function addition(a, b) {
     return +a + +b;
 }
+
 function subtraction(a, b) {
     return +a - +b;
 }
+
 function division(a, b) {
     if (b === "0") {
         return "エラー";
     }
     return +a / +b;
 }
+
 function multiplication(a, b) {
     return +a * +b;
 }
+
 function addToHistory(a, op, b, result) {
     const span = document.createElement("span");
     span.textContent = `${a} ${op} ${b} = ${result}`;
@@ -181,10 +208,4 @@ function addToHistory(a, op, b, result) {
     while (displayleftDiv.childElementCount > 4) {
         displayleftDiv.removeChild(displayleftDiv.firstChild);
     }
-}
-function setScientificNotation(value) {
-    if (value.toString().length > 9) {
-        return Number.parseFloat(value).toExponential(3);
-    }
-    return value;
 }
