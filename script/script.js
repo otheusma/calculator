@@ -12,12 +12,17 @@ let op = "";
 let a = "";
 let b = "";
 let isAfterOperation = false;
-let isValid = /^[-]?[\d.]+[e]?$/;
+let isValid = /^[-]?[\d.e+]+$/;
 
 equals.addEventListener("click", () => {
-    if (!op || !a || !b) return;
-    operate(op, a, b);
-    op = ""
+    if (a !== "" && b !== "") {
+        console.log("A DIFERENTE DE NADA / B DIFERENTE DE NADA");
+        operate(op, a, b);
+    } else if (a !== "" && op) {
+        display.textContent = a;
+        operation.textContent = a;
+        op = "";
+    }
 });
 
 percent.addEventListener("click", () => {
@@ -81,7 +86,7 @@ backspace.addEventListener("click", () => {
 
 operands.forEach(num => {
     num.addEventListener("click", () => {
-        if (num.id === "0" && !isValid.exec(display.textContent)) return;
+        if (num.id === "0" && display.textContent === "0") return;
         if (!op) {
             if (isAfterOperation) {
                 a = "";
@@ -105,7 +110,7 @@ operands.forEach(num => {
 
 operators.forEach(operator => {
     operator.addEventListener("click", () => {
-        if (!a) return;
+        if (a === "") return;
         if (a && b) {
             operate(op, a, b);
         } else if (op) {
@@ -134,6 +139,7 @@ function operate(opr, numA, numB) {
             result = division(numA, numB);
             break;
     }
+    result = round(result)
     a = result;
     b = "";
     op = "";
@@ -150,7 +156,7 @@ function subtraction(a, b) {
 }
 function division(a, b) {
     if (b === "0") {
-        return "o.O"
+        return "エラー"
     }
     return +a / +b;
 }
@@ -165,4 +171,11 @@ function addToHistory(a, op, b, result) {
     while (displayleftDiv.childElementCount > 4) {
         displayleftDiv.removeChild(displayleftDiv.firstChild);
     }
+}
+
+function round(value) {
+    if (value.toString().length >  9) {
+        return Number.parseFloat(value).toExponential(3);
+    }
+    return value;
 }
