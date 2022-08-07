@@ -88,10 +88,6 @@ button:active {
     transition: .1s;
 }
 
-.zero {
-    flex-grow: .8;
-}
-
 .history {
     opacity: .7;
     text-decoration: none;

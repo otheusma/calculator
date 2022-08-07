@@ -4,6 +4,7 @@ const operands = document.querySelectorAll(".operand");
 const operators = document.querySelectorAll(".operator");
 const equals = document.querySelector("#equals");
 const backspace = document.querySelector("#ec");
+const erase = document.querySelector("#ac");
 const decimal = document.querySelector("#decimal");
 const sign = document.querySelector("#sign");
 const percent = document.querySelector("#percent");
@@ -63,6 +64,14 @@ decimal.addEventListener("click", () => {
         operation.textContent = `${a} ${op} ${b}`
     }
 });
+
+erase.addEventListener("click", () => {
+    a = "";
+    b = "";
+    op = "";
+    display.textContent = a;
+    operation.textContent = a;
+})
 
 backspace.addEventListener("click", () => {
     if (operation.textContent.endsWith(" ")) {
@@ -174,7 +183,7 @@ function addToHistory(a, op, b, result) {
 }
 
 function round(value) {
-    if (value.toString().length >  9) {
+    if (value.toString().length > 9) {
         return Number.parseFloat(value).toExponential(3);
     }
     return value;
