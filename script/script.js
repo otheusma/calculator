@@ -148,7 +148,7 @@ function operate(opr, numA, numB) {
             result = division(numA, numB);
             break;
     }
-    result = round(result)
+    result = setScientificNotation(result);
     a = result;
     b = "";
     op = "";
@@ -165,7 +165,7 @@ function subtraction(a, b) {
 }
 function division(a, b) {
     if (b === "0") {
-        return "エラー"
+        return "エラー";
     }
     return +a / +b;
 }
@@ -181,8 +181,7 @@ function addToHistory(a, op, b, result) {
         displayleftDiv.removeChild(displayleftDiv.firstChild);
     }
 }
-
-function round(value) {
+function setScientificNotation(value) {
     if (value.toString().length > 9) {
         return Number.parseFloat(value).toExponential(3);
     }
