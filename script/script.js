@@ -17,7 +17,6 @@ let isValid = /^[-]?[\d.e+]+$/;
 
 equals.addEventListener("click", () => {
     if (a !== "" && b !== "") {
-        console.log("A DIFERENTE DE NADA / B DIFERENTE DE NADA");
         operate(op, a, b);
     } else if (a !== "" && op) {
         display.textContent = a;
@@ -28,12 +27,14 @@ equals.addEventListener("click", () => {
 
 percent.addEventListener("click", () => {
     if (!op) {
-        a = +a / 100;
+        a = setScientificNotation(+a / 100).toString();
         display.textContent = a;
+        operation.textContent = a;
 
     } else {
-        b = +b / 100;
+        b = setScientificNotation(+b / 100).toString();
         display.textContent = b;
+        operation.textContent = `${a} ${op} ${b}`;
     }
 })
 
